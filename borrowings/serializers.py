@@ -1,11 +1,10 @@
+from django.utils import timezone
 from django.contrib.auth import get_user_model
-from django.db import transaction
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.response import Response
 
-from books.models import Book
 from borrowings.models import Borrowing
+from books.models import Book
+
 
 User = get_user_model()
 
@@ -15,24 +14,22 @@ class BorrowingSerializer(serializers.ModelSerializer):
         model = Borrowing
         fields = "__all__"
 
-    def create(self, request, *args, **kwargs):
-        book_id = request.data.get("book_id")
-        extend_return_date = request.data.get("extend_return_date")
-        book = get_object_or_404(Book, id=book_id)
+    def validate_extend_return_date(self, value):
+        if value <= timezone.now().date():
+            raise serializers.ValidationError("The extend return date must be in the future.")
+        return value
 
-        if book.inventory > 0:
-            with transaction.atomic():
-                borrowing = Borrowing.objects.create(
-                    extend_return_date=extend_return_date, user=request.user, book=book
-                )
-                book.inventory -= 1
-                book.save()
-                serializer = self.get_serializer(borrowing)
+    def validate(self, data):
+        if data["book"].inventory <= 0:
+            raise serializers.ValidationError("This book is currently not available for borrowing.")
+        return data
 
-                return Response(serializer.data)
-
-        else:
-            return Response({"message": "Book is out of stock"}, status=400)
+    def create(self, validated_data):
+        book = validated_data["book"]
+        # Decrease the book inventory by 1 when a borrowing is created
+        book.inventory -= 1
+        book.save()
+        return super().create(validated_data)
 
 
 class BorrowingDetailSerializer(serializers.ModelSerializer):
