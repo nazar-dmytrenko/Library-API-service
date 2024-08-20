@@ -3,13 +3,10 @@ from books.models import Book
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingSerializer, BorrowingDetailSerializer
 
-from django.db import transaction
-from django.shortcuts import get_object_or_404
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
@@ -20,23 +17,8 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
 
-    def create(self, request, *args, **kwargs):
-        book_id = request.data.get("book_id")
-        extend_return_date = request.data.get("extend_return_date")
-        book = get_object_or_404(Book, id=book_id)
-        if book.inventory > 0:
-            with transaction.atomic():
-                borrowing = Borrowing.objects.create(
-                    extend_return_date=extend_return_date, user=request.user, book=book
-                )
-                book.inventory -= 1
-                book.save()
-                serializer = self.get_serializer(borrowing)
-                message = f"New borrowing created: {borrowing.book.title} by {borrowing.user.email}"
-                return Response(serializer.data)
-
-        else:
-            return Response({"message": "Book is out of stock"}, status=400)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -56,10 +38,10 @@ class BorrowingViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(actual_return_date__isnull=False)
         return queryset
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = BorrowingDetailSerializer(instance)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return BorrowingDetailSerializer
+        return BorrowingSerializer
 
     @extend_schema(
         parameters=[
