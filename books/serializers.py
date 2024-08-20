@@ -4,8 +4,8 @@ from books.models import Book, BookCover
 
 
 class BookSerializer(serializers.ModelSerializer):
-    cover = serializers.CharField(
-        choise=[(cover.name, cover.value) for cover in BookCover]
+    cover = serializers.ChoiceField(
+        choices=[(cover.name, cover.value) for cover in BookCover]
     )
 
     class Meta:
