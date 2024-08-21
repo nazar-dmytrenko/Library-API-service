@@ -11,10 +11,10 @@ The library management system created to fix the following issues in the current
 ## Features
 
 * JWT authenticated;
-* Admin panel /admin/ ;
-* Documentation at /api/doc/swagger/ ;
-* Books inventory management /books/ ;
-* Books borrowing management /borrowings/ ;
+* Admin panel `/admin/`;
+* Documentation at `/api/doc/swagger/`;
+* Books inventory management `/books/`;
+* Books borrowing management `/borrowings/`;
 * Notifications service through Telegram API (bot and chat);
 * Scheduled notifications with Django Q and Redis.
 
@@ -27,8 +27,8 @@ The library management system created to fix the following issues in the current
 
 Docker should be installed.
 
-Create `.env` file and type your variables. Like example, you can use .env.example file.
-To check how telegram bot chat working you need to create your own telegram bot and get bot token and chat id (for .env
+Create `.env` file and type your variables. Like example, you can use `.env.example` file.
+To check how telegram bot chat working you need to create your own telegram bot and get bot token and chat id (for `.env`
 file). You can do it by using this guideline:
 https://gist.github.com/nafiesl/4ad622f344cd1dc3bb1ecbe468ff9f8a
 
