@@ -7,6 +7,8 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from .utils import send_telegram_message
+from library_service import settings
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):
@@ -18,7 +20,13 @@ class BorrowingViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
+        borrowing = serializer.save(user=self.request.user)
         serializer.save(user=self.request.user)
+        bot_token = settings.TG_BOT_TOKEN
+        chat_id = settings.TG_CHAT_ID
+        message = f"Book '{borrowing.book.title}' has been borrowed by {self.request.user.username}."
+
+        send_telegram_message(bot_token, chat_id, message)
 
     def get_queryset(self):
         queryset = super().get_queryset()
