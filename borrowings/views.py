@@ -2,13 +2,14 @@ from django.shortcuts import render
 from books.models import Book
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingSerializer, BorrowingDetailSerializer
+from library_service import settings
+from .utils import send_telegram_message
 
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .utils import send_telegram_message
-from library_service import settings
 
 
 class BorrowingViewSet(viewsets.ModelViewSet):

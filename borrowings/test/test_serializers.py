@@ -1,7 +1,8 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
+
 from borrowings.models import Borrowing
 from books.models import Book
-from django.contrib.auth import get_user_model
 from borrowings.serializers import (
     BorrowingDetailSerializer,
     BorrowingSerializer,

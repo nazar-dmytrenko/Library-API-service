@@ -1,8 +1,11 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
+
 from datetime import date, timedelta
+
 from books.models import Book
 from borrowings.models import Borrowing
-from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 

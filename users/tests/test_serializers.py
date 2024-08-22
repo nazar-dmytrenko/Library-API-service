@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+
 from rest_framework import serializers
 from rest_framework.test import APIRequestFactory
+
 from users.serializers import (
     UserLoginSerializer,
     UserRegistrationSerializer,

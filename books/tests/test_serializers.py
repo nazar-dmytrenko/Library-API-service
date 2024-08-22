@@ -1,5 +1,7 @@
 from django.test import TestCase
+
 from books.serializers import BookSerializer
+
 from decimal import Decimal
 
 
