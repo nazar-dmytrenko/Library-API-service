@@ -1,6 +1,7 @@
 from django.db import models
-from enum import Enum
 from django.core.validators import MinValueValidator
+
+from enum import Enum
 
 
 class BookCover(Enum):

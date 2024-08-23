@@ -1,10 +1,10 @@
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
 
 from borrowings.models import Borrowing
 from books.models import Book
-
 
 User = get_user_model()
 
@@ -25,8 +25,10 @@ class BorrowingSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, validated_data):
+        """
+            Decrease the book inventory by 1 when a borrowing is created
+        """
         book = validated_data["book"]
-        # Decrease the book inventory by 1 when a borrowing is created
         book.inventory -= 1
         book.save()
         return super().create(validated_data)

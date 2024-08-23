@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase, RequestFactory
+
 from rest_framework.test import force_authenticate
+
 from books.models import Book
 from books.serializers import BookSerializer
 from books.views import BookViewSet
+
 from decimal import Decimal
 import json
 
